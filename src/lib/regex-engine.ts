@@ -30,7 +30,7 @@ export function safeRegexExec(
 ): RegexExecResult {
   const startTime = performance.now();
 
-  if (!pattern) {
+  if (pattern === undefined || pattern === null) {
     return {
       matches: [],
       matchCount: 0,
@@ -143,6 +143,23 @@ export function buildHighlightedText(
 
   result += escapeHtml(text.slice(lastIndex));
   return result;
+}
+
+/**
+ * Extract unique named group names from a regex pattern string.
+ */
+export function getNamedGroups(pattern: string): string[] {
+  const names: string[] = [];
+  try {
+    const re = /\(\?<([^>]+)>/g;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(pattern)) !== null) {
+      if (!names.includes(m[1])) names.push(m[1]);
+    }
+  } catch {
+    // ignore
+  }
+  return names;
 }
 
 function escapeHtml(str: string): string {

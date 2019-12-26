@@ -3,10 +3,17 @@ import { safeRegexExec, buildHighlightedText } from '../src/lib/regex-engine';
 import { presetPatterns, getCategories } from '../src/lib/patterns';
 
 describe('safeRegexExec', () => {
-  it('returns empty result for empty pattern', () => {
-    const result = safeRegexExec('', 'g', 'hello');
+  it('returns empty result for null/undefined pattern', () => {
+    const result = safeRegexExec(null as unknown as string, 'g', 'hello');
     expect(result.matches).toEqual([]);
     expect(result.matchCount).toBe(0);
+    expect(result.error).toBeNull();
+  });
+
+  it('matches at every position for empty string pattern', () => {
+    const result = safeRegexExec('', 'g', 'hello');
+    // empty regex matches at each position: 0,1,2,3,4,5 => 6 matches for "hello"
+    expect(result.matchCount).toBe(6);
     expect(result.error).toBeNull();
   });
 
